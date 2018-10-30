@@ -2,7 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var expressValidator = require('express-validator');
-
+var mongojs = require('mongojs');
+var db = mongojs('customerapp', ['users']);
 var app = express();
 
 //View Engine
@@ -39,7 +40,7 @@ app.use(expressValidator({
         };
     }
 }));
-
+/* temporary static array
 var users = [
     {
         id: 1,
@@ -60,13 +61,19 @@ var users = [
         email: 'mj@gmail.com',
     },
 ]
-
+*/
 //Route Handler
 app.get('/', function(req,res){
-    res.render('index', {
-        title: 'Customers',
-        users: users
-    });
+    db.users.find(function (err, docs) {
+        // docs is an array of all the documents in mycollection
+        //console.log(docs);
+
+        res.render('index', {
+            title: 'Customers',
+            users: docs
+        });
+    })
+
 });
 
 app.post('/users/add', function(req,res){
@@ -89,7 +96,13 @@ app.post('/users/add', function(req,res){
             last_name: req.body.last_name,
             email: req.body.email,
         }
-        console.log('SUCCESS');
+        //console.log('SUCCESS');
+        db.users.insert(newUser, function(err,result){
+            if(err){
+                console.log(err);
+            }
+            res.redirect('/');
+        });
     }
 
 
@@ -97,6 +110,11 @@ app.post('/users/add', function(req,res){
     console.log(newUser);
 });
 
+app.delete('/users/delete/:id', function(req,res){
+    console.log(req.params.id);
+});
+
 app.listen(3000, function(){
     console.log('Server Started on Port: 3000...');
 })
+
