@@ -69,7 +69,6 @@ app.get('/', function(req,res){
     db.users.find(function (err, docs) {
         // docs is an array of all the documents in mycollection
         //console.log(docs);
-
         res.render('index', {
             title: 'Customers',
             users: docs
@@ -78,8 +77,8 @@ app.get('/', function(req,res){
 
 });
 
+// add new user to mongoDB
 app.post('/users/add', function(req,res){
-
     req.checkBody('first_name', 'First Name is Required').notEmpty();
     req.checkBody('last_name', 'Last Name is Required').notEmpty();
     req.checkBody('email', 'Email is Required').notEmpty();
@@ -106,12 +105,9 @@ app.post('/users/add', function(req,res){
             res.redirect('/');
         });
     }
-
-
-
     console.log(newUser);
 });
-
+// delete user from mongoDB
 app.delete('/users/delete/:id', function(req,res){
     db.users.remove({_id: ObjectId(req.params.id)},function(err, result){
         if(err) {
@@ -120,8 +116,31 @@ app.delete('/users/delete/:id', function(req,res){
         res.redirect('/')
     });
 });
+// retieve single user from mongoDB
+app.get('/users/get/:id', function(req,res){
+    db.users.find({_id: ObjectId(req.params.id)},function(err, data){
+        if(err) {
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
+
+// update user in mongoDB
+// app.post('/users/edit/:id', function(req,res){
+//     db.users.find({_id: ObjectId(req.params.id)},function(err,result){
+//         if(err) {
+//             console.log(err);
+//         }
+//         //input values in textboxes
+//         res.render('edit', {
+//             title: 'Customers',
+//             user: result
+//         });
+//     });
+// });
 
 app.listen(3000, function(){
     console.log('Server Started on Port: 3000...');
-})
+});
 
