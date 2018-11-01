@@ -1,5 +1,4 @@
 <% include partials/header %>
-    <h1>Add Customer</h1>
     <% if(errors){ %>
         <ul>
         <% errors.forEach(function(error){ %>
@@ -7,7 +6,8 @@
         <% }) %>
         </ul>
     <% } %>
-    <form method="POST" action="/users/add">
+    <form method="POST" action="/users/add" id="addForm">
+        <h1>Add Customer</h1>
         <label>First Name</label><br>
         <input type="text" name="first_name">
         <br>
@@ -19,23 +19,24 @@
         <br><br>
         <input type="submit" value="Submit">
     </form>
+    <form method="POST" id="updateForm" onsubmit="confirmUpdate()" hidden>
+        <h1>Update Customer</h1>
+        <label>First Name</label><br>
+        <input type="text" name="edit_first_name" id="edit-first-name">
+        <br>
+        <label>Last Name</label><br>
+        <input type="text" name="edit_last_name" id="edit-last-name">
+        <br>
+        <label>Email</label><br>
+        <input type="text" name="edit_email" id="edit-email">
+        <input type="hidden" name="id" id="userId">
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
     <h1><%= title %></h1>
     <ul>
     <% users.forEach(function(user){ %>
         <li><%= user.first_name %> <%= user.last_name %> - <a href="#" class="deleteUser" data-id="<%= user._id %>">Delete</a> - <a href="#" class="editUser" data-id="<%= user._id %>">Edit</a></li>
     <% }) %>
     </ul>
-    <form method="POST" action="/users/update" id="updateForm" hidden>
-        <label>First Name</label><br>
-        <input type="text" name="first_name" id="edit-first-name">
-        <br>
-        <label>Last Name</label><br>
-        <input type="text" name="last_name" id="edit-last-name">
-        <br>
-        <label>Email</label><br>
-        <input type="text" name="email" id="edit-email">
-        <br><br>
-        <input type="submit" value="Submit">
-    </form>
-
 <% include partials/footer %>

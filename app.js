@@ -113,7 +113,7 @@ app.delete('/users/delete/:id', function(req,res){
         if(err) {
             console.log(err);
         }
-        res.redirect('/')
+        res.redirect('/');
     });
 });
 // retieve single user from mongoDB
@@ -127,18 +127,11 @@ app.get('/users/get/:id', function(req,res){
 });
 
 // update user in mongoDB
-// app.post('/users/edit/:id', function(req,res){
-//     db.users.find({_id: ObjectId(req.params.id)},function(err,result){
-//         if(err) {
-//             console.log(err);
-//         }
-//         //input values in textboxes
-//         res.render('edit', {
-//             title: 'Customers',
-//             user: result
-//         });
-//     });
-// });
+app.post('/users/update/', function(req,res){
+    console.log('update!');
+    //db.users.update({_id: ObjectId(req.params.id)},{first_name: req.params.first_name, last_name: req.params.last_name, email: req.params.email});
+    //res.redirect('/');
+});
 
 app.listen(3000, function(){
     console.log('Server Started on Port: 3000...');

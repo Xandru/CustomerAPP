@@ -40,8 +40,28 @@ function editUser(){
             $('#edit-first-name').attr('value',data['0'].first_name);
             $('#edit-last-name').attr('value',data['0'].last_name);
             $('#edit-email').attr('value',data['0'].email);
+            $('#userId').attr('value',data['0']._id);
         }
     });
-
     $('#updateForm').attr('hidden',false);
+    $('#addForm').attr('hidden',true);
+}
+
+function confirmUpdate(){
+    var data = $('#updateForm').serializeArray();
+
+    //Compare old data with new input data before confirming update
+    var str = '';
+    str += $('#edit-first-name').val() + '<br />';
+    str += $('#edit-last-name').val() + '<br />';
+    str += $('#edit-email').val() + '<br />';
+    $('.display').append(str);
+
+    if (confirm(str + "Is the information correct?")) {
+        $.ajax({
+            type:'POST',
+            url: '/users/update/',
+            data: data
+        });
+    } 
 }
