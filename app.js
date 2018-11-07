@@ -42,28 +42,6 @@ app.use(expressValidator({
         };
     }
 }));
-/* temporary static array
-var users = [
-    {
-        id: 1,
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'johndoe@gmail.com',
-    },
-    {
-        id: 2,
-        first_name: 'Jane',
-        last_name: 'Doe',
-        email: 'janedoe@gmail.com',
-    },
-    {
-        id: 3,
-        first_name: 'Michael',
-        last_name: 'Jackson',
-        email: 'mj@gmail.com',
-    },
-]
-*/
 //Route Handler
 app.get('/', function(req,res){
     db.users.find(function (err, docs) {
@@ -86,11 +64,15 @@ app.post('/users/add', function(req,res){
     var errors = req.validationErrors();
 
     if(errors){
-        res.render('index', {
-            title: 'Customers',
-            users: users,
-            errors: errors
-        });
+        db.users.find(function (err, docs) {
+            // docs is an array of all the documents in mycollection
+            //console.log(docs);
+            res.render('index', {
+                title: 'Customers',
+                users: docs,
+                errors: errors
+            });
+        })
     } else {
         var newUser = {
             first_name: req.body.first_name,
@@ -127,11 +109,68 @@ app.get('/users/get/:id', function(req,res){
 });
 
 // update user in mongoDB
-app.post('/users/update/', function(req,res){
-    console.log('update!');
-    //db.users.update({_id: ObjectId(req.params.id)},{first_name: req.params.first_name, last_name: req.params.last_name, email: req.params.email});
-    //res.redirect('/');
-});
+app.put('/users/update', function(req,res){
+    req.checkBody('first_name', 'First Name is Required').notEmpty();
+    req.checkBody('last_name', 'Last Name is Required').notEmpty();
+    req.checkBody('email', 'Email is Required').notEmpty();
+    
+    var errors = req.validationErrors();
+
+    if(errors){
+        db.users.find(function (err, docs) {
+            // docs is an array of all the documents in mycollection
+            //console.log(docs);
+            res.render('index', {
+                title: 'Customers',
+                users: docs,
+                errors: errors + err
+            });
+        })
+    } else {
+        var updateUser = {
+            first_name: req.params.first_name,
+            last_name: req.params.last_name,
+            email: req.params.email
+        }
+        db.users.find({_id: ObjectId(req.params.id)},function(err, data){
+            if(err) {
+                console.log("_ID not found: "+err);
+            } else {
+                console.log('User Found');
+                // db.users.findAndModify(
+                //     {_id: ObjectId(req.params.id)},
+                //     {$set:updateUser},
+                //     {new: true},
+                //     function(err,data){
+                //         if(err) {
+                //             console.log(err);
+                //         } else {
+                //             console.log(data);
+                //         }
+                //     }
+                // );     
+            }
+            //res.redirect('/'); 
+            //res.send(data);
+        });
+    }
+})
+// app.post('/users/update/', function(req,res){
+//     console.log('update!');
+//     // db.users.findAndModify({
+//     //   query: {_id: ObjectId(req.params.id)},
+//     //   update: {$set: {
+//     //     first_name: req.params.first_name,
+//     //     last_name: req.params.last_name,
+//     //     email: req.params.email
+//     //   }} 
+//     // }, function(err,doc,lastErrorObject) {
+//     //     if(err) {
+//     //         console.log(err);
+//     //     }
+//     //     res.redirect('/');
+//     // })
+// });
 
 app.listen(3000, function(){
     console.log('Server Started on Port: 3000...');

@@ -13,10 +13,8 @@ function deleteUser(){
         $.ajax({
             type:'DELETE',
             url: '/users/delete/' +$(this).data('id')
-        }).done(function(response){
-            //console.log('Deleted')
-            //window.location.replace('/');
         });
+        console.log('Deleted') // not logging
         window.location.replace('/');
     } else {
         return false;
@@ -51,17 +49,23 @@ function confirmUpdate(){
     var data = $('#updateForm').serializeArray();
 
     //Compare old data with new input data before confirming update
-    var str = '';
-    str += $('#edit-first-name').val() + '<br />';
-    str += $('#edit-last-name').val() + '<br />';
-    str += $('#edit-email').val() + '<br />';
+    var str = 'Updating new info to...\n';
+    str += 'First Name: ' + $('#edit-first-name').val() + '\n';
+    str += 'Last Name: ' + $('#edit-last-name').val() + '\n';
+    str += 'Email Name: ' + $('#edit-email').val() + '\n';
     $('.display').append(str);
 
-    if (confirm(str + "Is the information correct?")) {
+    var confirmation = confirm(str + "Is the information correct?");
+
+    if (confirmation) {
         $.ajax({
             type:'POST',
-            url: '/users/update/',
+            url: '/users/update',
             data: data
         });
-    } 
+        console.log('Updated') //not loggin
+        window.location.replace('/');
+    } else {
+        return false;
+    }
 }
